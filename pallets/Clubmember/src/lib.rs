@@ -37,10 +37,10 @@ pub mod pallet {
 	// The pallet's runtime storage items.
 	// https://docs.substrate.io/main-docs/build/runtime-storage/
 	#[pallet::storage]
-	#[pallet::getter(fn something)]
+	#[pallet::getter(fn clubmember)]
 	// Learn more about declaring storage items:
 	// https://docs.substrate.io/main-docs/build/runtime-storage/#declaring-storage-items
-	pub type Something<T> = StorageValue<_, u32>;
+	pub type ClubMembers<T:Config> = StorageValue<_,Vec<T::AccountId>, ValueQuery>;
 
 	// Pallets use events to inform users when important changes are made.
 	// https://docs.substrate.io/main-docs/build/events-errors/
@@ -50,6 +50,8 @@ pub mod pallet {
 		/// Event documentation should end with an array that provides descriptive names for event
 		/// parameters. [something, who]
 		SomethingStored { something: u32, who: T::AccountId },
+		MemberAdded,
+		MemberRemoved,
 	}
 
 	// Errors inform users that something went wrong.
@@ -59,6 +61,9 @@ pub mod pallet {
 		NoneValue,
 		/// Errors should have helpful documentation associated with them.
 		StorageOverflow,
+
+		MemberAlreadyPresent,
+		NoSuchMember,
 	}
 
 	// Dispatchable functions allows users to interact with the pallet and invoke state changes.
@@ -105,6 +110,33 @@ pub mod pallet {
 					Ok(())
 				},
 			}
+		}
+
+		//This is used to add customer into the list
+		#[pallet::call_index(2)]
+		#[pallet::weight(T::WeightInfo::add_member())]
+		pub fn add_member(origin: OriginFor<T>, who: AccountId) -> DispatchResult {
+			ensure_root()
+			
+		}
+
+
+		//This is used to remove customer into the list
+		#[pallet::call_index(3)]
+		#[pallet::weight(T::WeightInfo::remove_member())]
+		pub fn remove_member(origin: OriginFor<T>, who: AccountId) -> DispatchResult {
+			ensure_signed(origin)?;
+			
+		}
+
+
+
+		//This is used to remove customer into the list
+		#[pallet::call_index(4)]
+		#[pallet::weight(T::WeightInfo::exit_from_group())]
+		pub fn remove_member(origin: OriginFor<T>, who: AccountId) -> DispatchResult {
+			ensure_signed(origin)?;
+			
 		}
 	}
 }
